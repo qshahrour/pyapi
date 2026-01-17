@@ -25,6 +25,18 @@ spec:
         - name: app
           imagePullPolicy: Always
           image: {{ .Values.app.image }}
+          command:
+            - python
+          args:
+            - app.py
+          ports:
+            - containerPort: 5000
+              name: http
+              protocol: TCP
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "/bin/bash", "-c", "sleep 5; kill -QUIT 1" ]
           env:
             - name: DB_HOST
               value: mysql
@@ -34,14 +46,6 @@ spec:
               value: auth_pass
             - name: DB_NAME
               value: auth_db
-          ports:
-            - containerPort: 5000
-              name: http
-              protocol: TCP
-          lifecycle:
-            preStop:
-              exec:
-                command: [ "/bin/bash", "-c", "sleep 5; kill -QUIT 1" ]
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -56,6 +60,7 @@ spec:
               port: 5000
             initialDelaySeconds: 10
             timeoutSeconds: 5
+          volumeMounts:
           resources:
             {{ toYaml (.Values.resources.app) | nindent 12 }}
 
