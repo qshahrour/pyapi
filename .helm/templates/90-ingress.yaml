@@ -1,0 +1,21 @@
+---
+{{- $host := (.Values.app.url) }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Chart.Name }}
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+spec:
+  ingressClassName: {{ .Values.app.ingressClass }}
+  rules:
+  - host: {{ $host }}
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service: 
+              name: {{ .Chart.Name }}
+              port:
+                number: 5000
