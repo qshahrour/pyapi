@@ -7,7 +7,7 @@ import datetime
 import os
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret")
 
