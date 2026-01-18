@@ -70,7 +70,7 @@ kind: Service
 metadata:
   name: {{ .Chart.Name }}
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: {{ .Chart.Name }}
   ports:
