@@ -20,9 +20,16 @@ db = mysql.connector.connect(
 
 @app.route("/login", methods=["POST"])
 def login():
-    data = request.json
+    data = request.get_json(silent=True)
+
+    if not data:
+        return jsonify({"message": "Invalid or missing JSON body"}), 400
+
     email = data.get("email")
     password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"message": "Email and password required"}), 400
 
     cursor = db.cursor(dictionary=True)
     cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
@@ -41,6 +48,7 @@ def login():
         SECRET_KEY,
         algorithm="HS256"
     )
+    cursor.close()
 
     return jsonify({"token": token})
 
