@@ -48,7 +48,6 @@ def login():
         SECRET_KEY,
         algorithm="HS256"
     )
-    cursor.close()
 
     return jsonify({"token": token})
 
