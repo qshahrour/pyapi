@@ -21,24 +21,37 @@ db = mysql.connector.connect(
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json(silent=True)
-
     if not data:
         return jsonify({"message": "Invalid or missing JSON body"}), 400
 
     email = data.get("email")
     password = data.get("password")
-
     if not email or not password:
         return jsonify({"message": "Email and password required"}), 400
 
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
-    user = cursor.fetchone()
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
 
-    if not user or not bcrypt.checkpw(
-        password.encode(), user["password_hash"].encode()
-    ):
+        cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
+        user = cursor.fetchone()
+        cursor.close()
+        db.close()
+    except Exception as e:
+        return jsonify({"message": "Database error"}), 500
+
+    if not user:
         return jsonify({"message": "Invalid credentials"}), 401
+
+    try:
+        if not bcrypt.checkpw(
+            password.encode(),
+            user["password_hash"].encode()
+        ):
+            return jsonify({"message": "Invalid credentials"}), 401
+    except Exception:
+        return jsonify({"message": "Password hash error"}), 500
+
 
     token = jwt.encode(
         {
