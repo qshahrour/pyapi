@@ -9,8 +9,6 @@ import os
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-
 db = mysql.connector.connect(
     host=os.getenv("DB_HOST"),
     user=os.getenv("DB_USER"),
@@ -44,26 +42,6 @@ def login():
     if not user:
         return jsonify({"message": "Invalid credentials"}), 401
 
-    try:
-        if not bcrypt.checkpw(
-            password.encode(),
-            user["password_hash"].encode()
-        ):
-            return jsonify({"message": "Invalid credentials"}), 401
-    except Exception:
-        return jsonify({"message": "Password hash error"}), 500
-
-
-    token = jwt.encode(
-        {
-            "user_id": user["id"],
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-        },
-        SECRET_KEY,
-        algorithm="HS256"
-    )
-
-    return jsonify({"token": token})
 
 @app.route("/health")
 def health():
