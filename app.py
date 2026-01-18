@@ -33,7 +33,7 @@ def login():
         db = get_db()
         cursor = db.cursor(dictionary=True)
 
-        cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
+        cursor.execute("SELECT * FROM users;")
         user = cursor.fetchone()
         cursor.close()
         db.close()
