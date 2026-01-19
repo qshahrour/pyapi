@@ -9,6 +9,10 @@ app:
   whitelist: "0.0.0.0/0"
   image: 907244240513.dkr.ecr.eu-central-1.amazonaws.com/backend:latest
   env: dev
+  pullPolicy: IfNotPresent
+  hosts:
+    - host: qasem2.com
+      paths: ["/"]
 
 resources:
   app:
