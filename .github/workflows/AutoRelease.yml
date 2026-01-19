@@ -24,6 +24,10 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Get TAG
+        id: get_tag
+        run: echo TAG=${GITHUB_REF#refs/tags/} >> $GITHUB_ENV
+
       - name: Set up QEMU
         id: qemu
         uses: docker/setup-qemu-action@v3
@@ -69,5 +73,6 @@ jobs:
           tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
+            Version=${{  env.TAG }}
             BUILD_DATE=$(date +%s)
             GitCommit=${{ github.sha }}
