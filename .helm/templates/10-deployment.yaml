@@ -26,9 +26,13 @@ spec:
           imagePullPolicy: Always
           image: {{ .Values.app.image }}
           command:
-            - python
+            - uvicorn
           args:
-            - app.py
+            - main:app
+            - --host
+            - 0.0.0.0
+            - --port
+            - 8000
           ports:
             - containerPort: 5000
               name: http
